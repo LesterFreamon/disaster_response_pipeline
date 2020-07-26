@@ -7,6 +7,7 @@ from typing import (
     Tuple
 )
 
+import nltk
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
@@ -22,8 +23,8 @@ from sklearn.multioutput import MultiOutputClassifier
 from sklearn.pipeline import Pipeline
 from sklearn.preprocessing import OneHotEncoder
 
-URL_REGEX = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\(\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
-URL_BIT_REGEX = 'http bit\.ly ......'
+URL_REGEX = 'http[s]?://(?:[a-zA-Z]|[0-9]|[$-_@.&+]|[!*\\(\\),]|(?:%[0-9a-fA-F][0-9a-fA-F]))+'
+URL_BIT_REGEX = 'http bit\\.ly ......'
 
 
 def _split_to_feature_and_targets(
@@ -48,7 +49,10 @@ def tokenize(text: str) -> List[str]:
     detected_urls = re.findall(URL_REGEX, text)
     for url in detected_urls:
         text = text.replace(url, "urlplaceholder")
-        text = text.replace(URL_BIT_REGEX, "urlplaceholder")
+
+    detected_urls = re.findall(URL_BIT_REGEX, text)
+    for url in detected_urls:
+        text = text.replace(url, "urlplaceholder")
 
     text = re.sub(r"[^a-zA-Z0-9]", " ", text.lower())
     tokens = word_tokenize(text)
@@ -113,19 +117,21 @@ def build_model():
     return cv
 
 
-def evaluate_model(Y_test: pd.DataFrame, Y_pred: np.ndarray) -> None:
+def evaluate_model(Y_test: pd.DataFrame, Y_pred: np.ndarray) -> List[str]:
     """Evaluate model performance on test data"""
     category_names = Y_test.columns
+    outputs = []
     for index, name in enumerate(category_names):
         this_y_test = Y_test.values[:, index]
         this_y_pred = Y_pred[:, index]
-        print(
+        outputs.append(
             name + ": Accuracy: {:.3f} Precision: {:.3} Recall: {:.3f} F1_score: {:.3f}".format(
                 accuracy_score(this_y_test, this_y_pred),
                 precision_score(this_y_test, this_y_pred, average='weighted'),
                 recall_score(this_y_test, this_y_pred, average='weighted'),
                 f1_score(this_y_test, this_y_pred, average='weighted')
             ))
+    return outputs
 
 
 def save_model(model: GridSearchCV, model_filepath: str) -> None:
