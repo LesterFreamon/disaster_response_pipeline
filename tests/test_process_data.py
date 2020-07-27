@@ -2,12 +2,12 @@ import unittest
 
 import pandas as pd
 
-from src.process_data import (
+from ..src.process_data import (
     _get_category_names,
     _one_hot_encode_targets,
     clean_data
 )
-from tests.helpers import sort_and_assert_frame_equal
+from .helpers import sort_and_assert_frame_equal
 
 
 class TestProcess(unittest.TestCase):

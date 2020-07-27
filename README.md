@@ -17,6 +17,9 @@ The user can input the query via an app. The classified categories would be mark
 * Run Training: `python src/train_classifier.py data/DisasterResponse.db data/response_model.pkl`
 * Run App: `python run.py`
 
+### Test Code
+After installing the virtual environment, run `pytest tests`
+
 ### General Flow
 * `src/process_data.py` is responsible for the data cleaning.
   * Load and merge data from csv files
