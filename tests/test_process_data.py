@@ -14,7 +14,7 @@ class TestProcess(unittest.TestCase):
 
     def test_get_category_names(self):
         expected_output = ['related', 'request']
-        outputs = _get_category_names('related-1;request-0')
+        outputs = _get_category_names('related-1;request-0', ';')
 
         self.assertEqual(
             expected_output,

@@ -5,13 +5,17 @@ The model is trained on data from [Figure Eight](https://appen.com/).
 
 The user can input the query via an app. The classified categories would be marked in green.
 
+
 ### Home Page
 ![Home Page](./docs/home_page.png)
 
 
-
 ### Results Page
 ![Results Page](./docs/results.png)
+
+### Run Model
+* Run Training: `python src/train_classifier.py data/DisasterResponse.db data/response_model.pkl`
+* Run App: `python run.py`
 
 ### General Flow
 * `src/process_data.py` is responsible for the data cleaning.
@@ -46,4 +50,4 @@ The user can input the query via an app. The classified categories would be mark
 ### Acknowledgements
 I want to express my thanks to [Figure Eight](https://appen.com/) for the data and [Udacity](https://udacity.com) for the review and advice.
 
-
+[Github Repo](https://github.com/LesterFreamon/disaster_response_pipeline)

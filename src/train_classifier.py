@@ -31,13 +31,14 @@ def _split_to_feature_and_targets(
         df: pd.DataFrame,
         non_target_cols: List[str]
 ) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Index]:
+    """Split a dataframe into the features - X, and the targets - Y"""
     X = df[['id'] + non_target_cols].set_index('id')[['message', 'genre']]
     Y = df.drop(non_target_cols, axis=1).set_index('id')
     return X, Y
 
 
 def load_data(database_filepath: str) -> Tuple[pd.DataFrame, pd.DataFrame, pd.Index]:
-    """Load data and split to features and targets"""
+    """Load preprocessed data and split it into the a features table and targets table"""
     df = pd.read_sql_table('disaster_preprocess', 'sqlite:///{}'.format(database_filepath))
     non_target_cols = ['message', 'original', 'genre']
     X, Y = _split_to_feature_and_targets(df, non_target_cols)
@@ -155,9 +156,12 @@ def main():
 
         Y_pred = model.predict(X_test)
 
-
         print('Evaluating model...')
-        evaluate_model(Y_test, Y_pred)
+        evaluation_outputs = evaluate_model(Y_test, Y_pred)
+        for evaluation_output in evaluation_outputs:
+            print(evaluation_output)
+
+        save_model(evaluation_outputs, 'data/evaluation_metrics.pkl')
 
         print('Saving model...\n    MODEL: {}'.format(model_filepath))
         save_model(model, model_filepath)
@@ -169,7 +173,7 @@ def main():
             'Please provide the filepath of the disaster messages database '
             'as the first argument and the filepath of the pickle file to '
             'save the model to as the second argument. \n\nExample: python '
-            'train_classifier.py ../data/DisasterResponse.db classifier.pkl'
+            'train_classifier.py ../data/DisasterResponse.db data/response_model.pkl'
         )
 
 
