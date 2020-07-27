@@ -1,12 +1,10 @@
 import joblib
 import json
 
-from nltk.stem import WordNetLemmatizer
-from nltk.tokenize import word_tokenize
 import plotly
 import pandas as pd
 from flask import Flask
-from flask import render_template, request, jsonify
+from flask import render_template, request
 from plotly.graph_objs import Bar
 from sqlalchemy import create_engine
 

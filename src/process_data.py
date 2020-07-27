@@ -5,9 +5,9 @@ import pandas as pd
 from sqlalchemy import create_engine
 
 
-def _get_category_names(concat_categories_str: str) -> List[str]:
-    """Get all of the category names by parsing one raw target string"""
-    split_categories = concat_categories_str.split(';')
+def _get_category_names(concat_categories_str: str, delimiter: str) -> List[str]:
+    """Parse a raw target string in order to extract all of the categories"""
+    split_categories = concat_categories_str.split(delimiter)
     parsed_categories = [
         category_with_binary[:-2]
         for category_with_binary in split_categories
@@ -19,8 +19,8 @@ def _one_hot_encode_targets(
         message_categories_df: pd.DataFrame,
         raw_cat_col: str
 ) -> pd.DataFrame:
-    """Parse the dataframe target to get a one hot encoding"""
-    cat_names = _get_category_names(message_categories_df[raw_cat_col].iloc[0])
+    """Parse the dataframe target to get a one hot encoding of the message categories"""
+    cat_names = _get_category_names(message_categories_df[raw_cat_col].iloc[0], ';')
     cat_df = message_categories_df[raw_cat_col].str.split(';', expand=True)
     cat_df.columns = cat_names
     for cat_name in cat_names:
@@ -30,7 +30,7 @@ def _one_hot_encode_targets(
 
 
 def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
-    """Load and merge the data"""
+    """Load messages (features) and categories(targets) and return a merged dataframe"""
     messages_df = pd.read_csv(messages_filepath)
     categories_df = pd.read_csv(categories_filepath)
     merged_df = messages_df.merge(categories_df, on='id')
@@ -38,7 +38,7 @@ def load_data(messages_filepath: str, categories_filepath: str) -> pd.DataFrame:
 
 
 def clean_data(message_categories_df: pd.DataFrame) -> pd.DataFrame:
-    """Parse the target column and remove duplicates"""
+    """Parse the target column into a multilabel output and remove duplicate rows"""
     parsed_targets_df = _one_hot_encode_targets(message_categories_df, 'categories')
     clean_df = parsed_targets_df.drop_duplicates()
     return clean_df

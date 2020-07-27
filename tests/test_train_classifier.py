@@ -1,15 +1,14 @@
 import unittest
 
 import pandas as pd
-from sklearn.utils.estimator_checks import check_estimator
 
-from src.train_classifier import (
+from ..src.train_classifier import (
     _split_to_feature_and_targets,
     evaluate_model,
     SpecialCharExtractor,
     tokenize
 )
-from tests.helpers import sort_and_assert_frame_equal
+from .helpers import sort_and_assert_frame_equal
 
 
 class TestTrainClassifier(unittest.TestCase):
